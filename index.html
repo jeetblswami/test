@@ -1,0 +1,110 @@
+<html>
+    <head>
+        <style>
+            .videoElement{
+                height: 200px;
+                margin: 9px 9px;
+                border: 2px orange;
+                border-radius: 5px; 
+            }
+            .buttons{
+                background: orange;
+                padding: 4px 9px;
+                color: white;
+                font-weight: 800;
+                border-radius: 5px;
+                cursor: pointer;
+                margin: 9px 9px;
+                text-align: center;
+            }
+            .buttonDisabled{
+                opacity: 0.5;
+                pointer-events: none;
+            }
+            #iceServers{
+                height:235px;
+                width:400px;
+                border: 1px solid black;
+                border-radius: 5px;
+                margin-top: 17px;
+            }
+            select#servers {
+                width: 100%; 
+            }
+            .inputServer {
+                right: 0px;
+                position: absolute;
+                width: 320px;
+                margin-top: 4px;
+            }
+        </style>
+        <script src="adapter.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
+    </head>
+    <body>
+        <div ng-app="myApp" ng-controller="testAvCall">
+            <video id="localVideo" class="videoElement" autoplay muted ></video>
+            <video id="remoteVideo" class="videoElement" autoplay ng-show="isCallActive"></video>
+            <br />
+            <span class="buttons" ng-class="{'buttonDisabled':isCallDisabled}" ng-show="!isCallActive" ng-click="startCall(true)" >Start Call</span>
+            <span class="buttons" ng-click="stopCall(true)" ng-show="isCallActive" style="background: red;">Stop Call</span>
+            <div ng-class="{'buttonDisabled':isCallActive}" style="top: 10px;position: absolute;right: 20px;">
+                <input type="checkbox" ng-model="AECenabled"> Enable AEC
+                <br />
+                <input type="checkbox" ng-if="browser=='chrome'" ng-model="AGCenabled"><span ng-if="browser=='chrome'"> Enable AGC</span>
+                <br />
+                <input type="checkbox" ng-if="browser=='chrome'" ng-model="DSCPenabled"><span ng-if="browser=='chrome'"> Enable DSCP</span>
+                <br />
+                <div style="margin-top: 14px;">
+                    <label>
+                        <input type="radio" ng-model="CodecPref" value="OPUS">
+                        OPUS
+                    </label><br/>
+                    <label>
+                        <input type="radio" ng-model="CodecPref" value="PCMU">
+                        PCMU
+                    </label><br/>
+                    <label>
+                        <input type="radio" ng-model="CodecPref" value="PCMU/OPUS">
+                        PCMU/OPUS
+                    </label><br/>
+                    <label>
+                        <input type="radio" ng-model="CodecPref" value="OPUS/PCMU">
+                        OPUS/PCMU
+                    </label><br/>
+                    <label>
+                        <input type="radio" ng-model="CodecPref" value="None">
+                        None
+                    </label><br/>
+                </div>
+                <section id="iceServers">
+                    <select id="servers" size="4">
+                        <option value="{&quot;urls&quot;:[&quot;turn:104.130.198.163:3478&quot;],&quot;username&quot;:&quot;jeet&quot;,&quot;credential&quot;:&quot;jeet1&quot;}" ondblclick="selectServer(event);">turn:104.130.198.163:3478 [jeet:jeet1]</option>
+                    </select>
+                    <div style="margin-top: 4px">
+                        <label for="url"  style="margin-top: 4px">URI:</label>
+                        <input id="url" class="inputServer">
+                    </div>
+
+                    <div style="margin-top: 4px">
+                        <label for="username"  style="margin-top: 4px">username:</label>
+                        <input id="username" class="inputServer">
+                    </div>
+
+                    <div style="margin-top: 4px">
+                        <label for="password"  style="margin-top: 4px">password:</label>
+                        <input id="password" class="inputServer">
+                    </div>
+
+                    <div style="margin-top: 8px">
+                        <div  class="buttons" style="width: 37%;display: inline-block;float: left;" id="add" onclick="addServer()">Add Server</div>
+                        <div  class="buttons" style="width: 37%;display: inline-block;float: right;" id="remove" onclick="removeServer()">Remove Server</div>
+                    </div>
+
+                </section>
+            </div>
+        </div>
+        <script src="main.js"></script>
+    </body>
+</html>
